@@ -185,90 +185,102 @@ def main():
             time.sleep(0.5)
             progress_container.empty()
             
-            # Metrics
-            elapsed_time = time.time() - start_time
-            virality_score = final_state.get('virality_score', 0)
-            iterations = final_state.get('iteration_count', 0)
+            # Store in session state
+            st.session_state['results'] = {
+                'final_state': final_state,
+                'elapsed_time': time.time() - start_time,
+                'platform': platform
+            }
             
-            # Display Metrics Row
-            m1, m2, m3 = st.columns(3)
-            with m1:
-                st.markdown(f"""
-                <div class="metric-card">
-                    <div class="metric-value">{virality_score}/100</div>
-                    <div class="metric-label">Virality Score</div>
-                </div>
-                """, unsafe_allow_html=True)
-            with m2:
-                st.markdown(f"""
-                <div class="metric-card">
-                    <div class="metric-value">{elapsed_time:.1f}s</div>
-                    <div class="metric-label">Generation Time</div>
-                </div>
-                """, unsafe_allow_html=True)
-            with m3:
-                st.markdown(f"""
-                <div class="metric-card">
-                    <div class="metric-value">{iterations}</div>
-                    <div class="metric-label">Iterations</div>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            st.divider()
-            
-            # Tabbed Results
-            tab_content, tab_research, tab_feedback = st.tabs([
-                "Agent: Ghostwriter (Content)", 
-                "Agent: Trend Scout (Research)", 
-                "Agent: Chief Editor (Feedback)"
-            ])
-            
-            # 1. Generated Content Tab
-            with tab_content:
-                final_content = final_state.get('final_content', '') or final_state.get('draft_content', '')
-                if final_content:
-                    st.markdown(final_content)  # Use markdown to render properly
-                    st.download_button(
-                        "Download Text",
-                        data=final_content,
-                        file_name=f"viral_{platform.lower()}_{int(time.time())}.txt",
-                        mime="text/plain"
-                    )
-                else:
-                    st.error("No content generated.")
-            
-            # 2. Research Angles Tab
-            with tab_research:
-                angles = final_state.get('research_angles', [])
-                if angles:
-                    st.markdown("### 🕵️ Trend Scout's Findings")
-                    for i, angle in enumerate(angles, 1):
-                        with st.expander(f"Angle {i}: {angle.get('title', 'Untitled')}", expanded=True):
-                            st.markdown(f"**Why Viral:** {angle.get('why_viral', 'N/A')}")
-                            st.markdown(f"**Summary:** {angle.get('summary', 'N/A')}")
-                            if angle.get('sources'):
-                                st.markdown("**Sources:**")
-                                for source in angle['sources']:
-                                    st.markdown(f"- [{source}]({source})")
-                else:
-                    st.info("No research angles found.")
-            
-            # 3. Editor Feedback Tab
-            with tab_feedback:
-                feedback = final_state.get('editor_feedback', '')
-                if feedback:
-                    st.markdown("### ⚖️ Chief Editor's Report")
-                    st.info(feedback)
-                    
-                    if final_state.get('virality_score', 0) >= config.VIRALITY_THRESHOLD:
-                        st.success("✨ Active Editor: Applied final polish based on this feedback.")
-                else:
-                    st.info("No feedback provided.")
-                    
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
             with st.expander("Error Details"):
                 st.code(str(e))
+
+    # Display Results from Session State
+    if 'results' in st.session_state:
+        results = st.session_state['results']
+        final_state = results['final_state']
+        elapsed_time = results['elapsed_time']
+        platform = results['platform']
+        
+        virality_score = final_state.get('virality_score', 0)
+        iterations = final_state.get('iteration_count', 0)
+        
+        # Display Metrics Row
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-value">{virality_score}/100</div>
+                <div class="metric-label">Virality Score</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with m2:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-value">{elapsed_time:.1f}s</div>
+                <div class="metric-label">Generation Time</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with m3:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-value">{iterations}</div>
+                <div class="metric-label">Iterations</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.divider()
+        
+        # Tabbed Results
+        tab_content, tab_research, tab_feedback = st.tabs([
+            "Agent: Ghostwriter (Content)", 
+            "Agent: Trend Scout (Research)", 
+            "Agent: Chief Editor (Feedback)"
+        ])
+        
+        # 1. Generated Content Tab
+        with tab_content:
+            final_content = final_state.get('final_content', '') or final_state.get('draft_content', '')
+            if final_content:
+                st.markdown(final_content)
+                st.download_button(
+                    "Download Text",
+                    data=final_content,
+                    file_name=f"viral_{platform.lower()}_{int(time.time())}.txt",
+                    mime="text/plain"
+                )
+            else:
+                st.error("No content generated.")
+        
+        # 2. Research Angles Tab
+        with tab_research:
+            angles = final_state.get('research_angles', [])
+            if angles:
+                st.markdown("### 🕵️ Trend Scout's Findings")
+                for i, angle in enumerate(angles, 1):
+                    with st.expander(f"Angle {i}: {angle.get('title', 'Untitled')}", expanded=True):
+                        st.markdown(f"**Why Viral:** {angle.get('why_viral', 'N/A')}")
+                        st.markdown(f"**Summary:** {angle.get('summary', 'N/A')}")
+                        if angle.get('sources'):
+                            st.markdown("**Sources:**")
+                            for source in angle['sources']:
+                                st.markdown(f"- [{source}]({source})")
+            else:
+                st.info("No research angles found.")
+        
+        # 3. Editor Feedback Tab
+        with tab_feedback:
+            feedback = final_state.get('editor_feedback', '')
+            if feedback:
+                st.markdown("### ⚖️ Chief Editor's Report")
+                st.info(feedback)
+                
+                if final_state.get('virality_score', 0) >= config.VIRALITY_THRESHOLD:
+                    st.success("✨ Active Editor: Applied final polish based on this feedback.")
+            else:
+                st.info("No feedback provided.")
 
 
 if __name__ == "__main__":
