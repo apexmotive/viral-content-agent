@@ -36,9 +36,14 @@ def ghostwriter_agent(state: Dict) -> Dict:
         
         logger.info(f"✅ Draft created ({len(draft)} chars)")
         
+        # Update drafts history
+        current_drafts = state.get('drafts', [])
+        new_drafts = current_drafts + [draft]
+        
         return {
             **state,
             'draft_content': draft,
+            'drafts': new_drafts,
             'status': 'drafting_complete'
         }
         

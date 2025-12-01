@@ -31,6 +31,12 @@ def chief_editor_agent(state: Dict) -> Dict:
         
         logger.info(f"📊 Virality Score: {score}/100")
         
+        # Update history
+        current_scores = state.get('scores', [])
+        current_feedbacks = state.get('feedbacks', [])
+        new_scores = current_scores + [score]
+        new_feedbacks = current_feedbacks + [feedback]
+        
         # Determine if approved
         threshold = config.VIRALITY_THRESHOLD
         approved = score >= threshold
@@ -48,7 +54,9 @@ def chief_editor_agent(state: Dict) -> Dict:
             return {
                 **state,
                 'virality_score': score,
+                'scores': new_scores,
                 'editor_feedback': feedback,
+                'feedbacks': new_feedbacks,
                 'final_content': final_polished,
                 'status': 'approved'
             }
@@ -58,7 +66,9 @@ def chief_editor_agent(state: Dict) -> Dict:
             return {
                 **state,
                 'virality_score': score,
+                'scores': new_scores,
                 'editor_feedback': feedback,
+                'feedbacks': new_feedbacks,
                 'status': 'needs_revision'
             }
         

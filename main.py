@@ -163,6 +163,10 @@ def main():
             st.warning("Please enter a topic first.")
             return
             
+        # Clear previous results from session state to force fresh generation
+        if 'results' in st.session_state:
+            del st.session_state['results']
+            
         # Progress Container
         progress_container = st.empty()
         with progress_container.container():
@@ -243,14 +247,28 @@ def main():
         # 1. Generated Content Tab
         with tab_content:
             final_content = final_state.get('final_content', '') or final_state.get('draft_content', '')
+            drafts = final_state.get('drafts', [])
+            scores = final_state.get('scores', [])
+            
             if final_content:
-                st.markdown(final_content)
-                st.download_button(
-                    "Download Text",
-                    data=final_content,
-                    file_name=f"viral_{platform.lower()}_{int(time.time())}.txt",
-                    mime="text/plain"
-                )
+                # Show Final Content (Expanded by default)
+                with st.expander("✨ **Final Content**", expanded=True):
+                    st.markdown(final_content)
+                    st.download_button(
+                        "Download Final Text",
+                        data=final_content,
+                        file_name=f"viral_{platform.lower()}_{int(time.time())}.txt",
+                        mime="text/plain"
+                    )
+                
+                # Show Draft History
+                if drafts:
+                    st.markdown("### 📜 Draft History")
+                    for i, draft in enumerate(drafts, 1):
+                        # Get corresponding score if available
+                        score_display = f" (Score: {scores[i-1]})" if i <= len(scores) else ""
+                        with st.expander(f"**Draft {i}{score_display}**", expanded=False):
+                            st.markdown(draft)
             else:
                 st.error("No content generated.")
         
@@ -260,7 +278,7 @@ def main():
             if angles:
                 st.markdown("### 🕵️ Trend Scout's Findings")
                 for i, angle in enumerate(angles, 1):
-                    with st.expander(f"Angle {i}: {angle.get('title', 'Untitled')}", expanded=True):
+                    with st.expander(f"**Angle {i}: {angle.get('title', 'Untitled')}**", expanded=True):
                         st.markdown(f"**Why Viral:** {angle.get('why_viral', 'N/A')}")
                         st.markdown(f"**Summary:** {angle.get('summary', 'N/A')}")
                         if angle.get('sources'):
@@ -272,13 +290,28 @@ def main():
         
         # 3. Editor Feedback Tab
         with tab_feedback:
-            feedback = final_state.get('editor_feedback', '')
-            if feedback:
+            feedbacks = final_state.get('feedbacks', [])
+            scores = final_state.get('scores', [])
+            threshold = config.VIRALITY_THRESHOLD
+            
+            if feedbacks:
                 st.markdown("### ⚖️ Chief Editor's Report")
-                st.info(feedback)
                 
-                if final_state.get('virality_score', 0) >= config.VIRALITY_THRESHOLD:
-                    st.success("✨ Active Editor: Applied final polish based on this feedback.")
+                # Show history of reviews
+                for i, feedback in enumerate(feedbacks, 1):
+                    score = scores[i-1] if i <= len(scores) else 0
+                    is_passing = score >= threshold
+                    status_icon = "✅" if is_passing else "❌"
+                    comparison = ">=" if is_passing else "<"
+                    
+                    title = f"**Review for Draft {i} (Score: {score} {comparison} {threshold}) {status_icon}**"
+                    
+                    with st.expander(title, expanded=True):
+                        st.info(feedback)
+                
+                # Show final polish note if applicable
+                if final_state.get('virality_score', 0) >= threshold:
+                    st.success("✨ Chief Editor: I've applied a final polish based on the last feedback.")
             else:
                 st.info("No feedback provided.")
 

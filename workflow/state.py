@@ -15,10 +15,13 @@ class ContentState(TypedDict):
     
     # Drafting phase
     draft_content: str
+    drafts: List[str]  # History of all drafts created
     
     # Review phase
     virality_score: int
+    scores: List[int]  # History of scores
     editor_feedback: str
+    feedbacks: List[str]  # History of feedback
     
     # Control flow
     iteration_count: int
