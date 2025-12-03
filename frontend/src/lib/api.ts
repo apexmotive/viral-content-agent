@@ -2,23 +2,31 @@
 
 import axios, { AxiosError } from 'axios';
 
-// Use relative path in production (same domain), localhost in development
-// In production on Vercel, API routes are on the same domain
-// In development, use localhost backend
-const getApiUrl = () => {
+// Get API URL - use relative path in production, localhost in development
+const getApiUrl = (): string => {
   // If NEXT_PUBLIC_API_URL is explicitly set, use it
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  // In browser (production), use relative path
+  
+  // In browser (client-side)
   if (typeof window !== 'undefined') {
+    // If hostname is localhost, use localhost backend
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://localhost:8000';
+    }
+    // Otherwise, we're in production - use relative path (same domain)
     return '';
   }
-  // In server-side (development), use localhost
+  
+  // Server-side: check NODE_ENV
+  if (process.env.NODE_ENV === 'production') {
+    return ''; // Relative path in production
+  }
+  
+  // Server-side development
   return 'http://localhost:8000';
 };
-
-const API_URL = getApiUrl();
 
 export interface GenerationSettings {
     model: string;
@@ -61,15 +69,13 @@ export interface ModelsResponse {
 }
 
 class APIClient {
-    private baseURL: string;
-
-    constructor() {
-        this.baseURL = API_URL;
+    private getBaseURL(): string {
+        return getApiUrl();
     }
 
     async healthCheck(): Promise<HealthResponse> {
         try {
-            const response = await axios.get<HealthResponse>(`${this.baseURL}/api/health`);
+            const response = await axios.get<HealthResponse>(`${this.getBaseURL()}/api/health`);
             return response.data;
         } catch (error) {
             throw this.handleError(error);
@@ -78,7 +84,7 @@ class APIClient {
 
     async getModels(): Promise<string[]> {
         try {
-            const response = await axios.get<ModelsResponse>(`${this.baseURL}/api/models`);
+            const response = await axios.get<ModelsResponse>(`${this.getBaseURL()}/api/models`);
             return response.data.models;
         } catch (error) {
             throw this.handleError(error);
@@ -88,7 +94,7 @@ class APIClient {
     async generateContent(request: GenerateRequest): Promise<GenerateResponse> {
         try {
             const response = await axios.post<GenerateResponse>(
-                `${this.baseURL}/api/generate`,
+                `${this.getBaseURL()}/api/generate`,
                 request,
                 {
                     headers: {
