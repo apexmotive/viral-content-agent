@@ -10,160 +10,264 @@ The Viral Content Agent Team is a multi-agent system that automatically creates 
 - **✍️ Ghostwriter**: Creates compelling content using Groq LLM
 - **⚖️ Chief Editor**: Reviews and scores content for virality (with feedback loop)
 
+## Tech Stack
+
+**Frontend:**
+- Next.js 16 (App Router)
+- TypeScript
+- TailwindCSS with glassmorphism design
+- React Markdown for content rendering
+
+**Backend:**
+- FastAPI (Python)
+- LangGraph for multi-agent orchestration
+- Groq API (Llama models)
+- Tavily API for research
+
 ## Features
 
 ✨ **Intelligent Research**: Finds trending angles and connections for any topic  
 🎯 **Platform-Optimized**: Different formatting for Twitter threads vs LinkedIn posts  
-🔄 **Feedback Loop**: Iteratively improves content until it meets virality threshold  
+🔄 **Active Editor**: Chief Editor polishes content directly instead of just critiquing  
 📊 **Virality Scoring**: Evaluates hook strength, emoji usage, structure, and platform optimization  
-🎨 **Beautiful UI**: Modern Streamlit interface with real-time progress tracking
+📜 **Draft History**: Track every iteration with scores and feedback  
+🎨 **Modern UI**: Vibrant glassmorphism design with real-time updates  
+⚙️ **Customizable Settings**: Adjust model, iterations, and threshold on the fly  
+🚀 **Vercel Ready**: Optimized for deployment on Vercel
 
 ## Installation
 
-### 1. Clone or navigate to the project
+### Prerequisites
+
+- Python 3.9+
+- Node.js 18+
+- npm or yarn
+
+### 1. Clone the repository
 
 ```bash
 cd /Users/admin/Projects/viral-content-agent
 ```
 
-### 2. Create a virtual environment
+### 2. Set up the Backend
 
 ```bash
+cd backend
+
+# Create virtual environment
 python3 -m venv venv
 source venv/bin/activate  # On Mac/Linux
-```
+# or
+.\venv\Scripts\activate  # On Windows
 
-### 3. Install dependencies
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Configure API keys
+cp .env.example .env
+# Edit .env and add your API keys
 ```
 
-### 4. Configure API Keys
-
-Create a `.env` file in the project root:
+### 3. Set up the Frontend
 
 ```bash
-cp .env.example .env
+cd ../frontend
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.local.example .env.local
+# Edit .env.local if needed (defaults to http://localhost:8000)
 ```
 
-Edit `.env` and add your API keys:
-
-```env
-GROQ_API_KEY=your_groq_api_key_here
-TAVILY_API_KEY=your_tavily_api_key_here
-```
-
-#### Getting API Keys
+### 4. Get API Keys
 
 - **Groq API**: Sign up at [console.groq.com](https://console.groq.com) (Free tier available)
 - **Tavily API**: Sign up at [tavily.com](https://tavily.com) (Free tier: 1000 requests/month)
 
-## Usage
+Add them to `backend/.env`:
 
-### Run the Streamlit App
-
-```bash
-streamlit run main.py
+```env
+GROQ_API_KEY=your_groq_api_key_here
+TAVILY_API_KEY=your_tavily_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+MAX_ITERATIONS=3
+VIRALITY_THRESHOLD=85
 ```
 
-The app will open in your browser at `http://localhost:8501`
+## Usage
 
-### Using the Interface
+### Running Locally
 
-1. **Enter a topic** (even boring technical topics work great!)
+You need two terminal windows:
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+source venv/bin/activate  # Activate virtual environment
+python main.py
+# or
+uvicorn main:app --reload
+```
+
+The API will be available at `http://localhost:8000`
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+The app will open at `http://localhost:3000`
+
+### Using the Application
+
+1. **Configure Settings** (in sidebar):
+   - Select your preferred model
+   - Adjust max iterations (1-5)
+   - Set virality threshold (50-100)
+
+2. **Enter a topic** (even boring technical topics work great!):
    - Example: "Database Normalization"
    - Example: "Supply Chain Logistics"
    
-2. **Select platform**: Twitter or LinkedIn
+3. **Select platform**: Twitter or LinkedIn
 
-3. **Click "Generate Viral Content"**
+4. **Click "Generate"**
 
-4. **Watch the agents work**:
+5. **Watch the agents work**:
    - Trend Scout researches angles
-   - Ghostwriter creates draft
+   - Ghostwriter creates drafts
    - Chief Editor scores and provides feedback
-   - Loop repeats until content scores ≥85 or max iterations reached
+   - Loop repeats until content passes threshold
+   - Chief Editor applies final polish
 
-5. **Download your viral content** ready to post!
+6. **Explore Results** in tabs:
+   - **Ghostwriter Tab**: View final content and all draft iterations with scores
+   - **Trend Scout Tab**: See research angles and sources
+   - **Chief Editor Tab**: Review all feedback and scores
 
-## Architecture
+7. **Download your viral content** ready to post!
+
+## Deployment to Vercel
+
+### Option 1: Vercel (Frontend Only)
+
+If you want to deploy the frontend to Vercel and run the backend separately:
+
+1. **Deploy Frontend to Vercel:**
+   ```bash
+   cd frontend
+   vercel
+   ```
+
+2. **Deploy Backend to Railway/Render/Fly.io:**
+   - Push backend to a separate repository
+   - Deploy using your preferred platform
+   - Get the backend URL
+
+3. **Configure Frontend Environment:**
+   - In Vercel dashboard, add environment variable:
+   - `NEXT_PUBLIC_API_URL` = your backend URL
+
+### Option 2: Separate Deployment
+
+**Backend (Railway/Render):**
+```bash
+# Push backend directory to GitHub
+# Connect to Railway/Render
+# Add environment variables in dashboard
+```
+
+**Frontend (Vercel):**
+```bash
+# Push frontend directory to GitHub
+# Connect to Vercel
+# Add NEXT_PUBLIC_API_URL environment variable
+```
+
+## Project Structure
 
 ```
 viral-content-agent/
-├── agents/              # Agent implementations
-│   ├── trend_scout.py   # Research agent (Tavily)
-│   ├── ghostwriter.py   # Content creation (Groq)
-│   └── chief_editor.py  # Review & scoring (Groq)
-├── tools/               # API integrations
-│   ├── tavily_search.py # Tavily wrapper
-│   └── groq_llm.py      # Groq wrapper
-├── workflow/            # LangGraph orchestration
-│   ├── state.py         # Shared state schema
-│   └── graph.py         # Workflow definition
-├── utils/               # Utilities
-│   └── logger.py        # Logging
-├── main.py             # Streamlit UI
-└── config.py           # Configuration
+├── backend/                    # FastAPI backend
+│   ├── main.py                # FastAPI app entry point
+│   ├── api/
+│   │   ├── routes.py          # API endpoints
+│   │   └── models.py          # Pydantic models
+│   ├── agents/                # Agent implementations
+│   ├── workflow/              # LangGraph orchestration
+│   ├── tools/                 # API integrations
+│   ├── utils/                 # Utilities
+│   ├── config.py              # Configuration
+│   ├── requirements.txt       # Python dependencies
+│   └── .env                   # Backend secrets
+│
+├── frontend/                   # Next.js frontend
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── layout.tsx     # Root layout
+│   │   │   ├── page.tsx       # Main page
+│   │   │   └── globals.css    # Global styles
+│   │   └── lib/
+│   │       └── api.ts         # API client
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── tailwind.config.ts
+│   ├── next.config.ts
+│   └── .env.local             # Frontend env vars
+│
+├── vercel.json                # Vercel deployment config
+└── README.md                  # This file
 ```
+
+## API Endpoints
+
+- `GET /api/health` - Health check
+- `GET /api/models` - List available models
+- `POST /api/generate` - Generate viral content
+- `POST /api/generate/stream` - Stream generation with real-time updates (SSE)
 
 ## Configuration
 
-Edit `.env` to customize:
+### Backend Environment Variables
 
 ```env
-# Model selection
+GROQ_API_KEY=your_groq_api_key_here
+TAVILY_API_KEY=your_tavily_api_key_here
 GROQ_MODEL=llama-3.3-70b-versatile
-
-# Workflow settings
-MAX_ITERATIONS=3          # Max revision loops
-VIRALITY_THRESHOLD=85     # Minimum score to approve
+MAX_ITERATIONS=3
+VIRALITY_THRESHOLD=85
 ```
 
-## Examples
+### Frontend Environment Variables
 
-### Input
-- **Topic**: "Database Normalization"
-- **Platform**: Twitter
-
-### Output
-A 10-tweet thread with:
-- Killer hook connecting databases to a trending tech story
-- Clear explanation with analogies
-- Viral-worthy insights and contrarian takes
-- Strategic emoji usage
-- Perfect Twitter formatting
-
-## How It Works
-
-1. **Research Phase**: Trend Scout searches Tavily for trending discussions, news, and viral angles related to your topic
-
-2. **Creation Phase**: Ghostwriter uses those angles to craft platform-specific content with attention to hooks, structure, and readability
-
-3. **Review Phase**: Chief Editor scores the content (0-100) based on:
-   - Hook Strength (30 pts)
-   - Emoji Usage (20 pts)
-   - Structure & Rhythm (25 pts)
-   - Platform Optimization (25 pts)
-
-4. **Iteration**: If score < 85, specific feedback is sent back to Ghostwriter for revision (max 3 iterations)
-
-5. **Approval**: Once score ≥ 85 or max iterations reached, content is delivered
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
 ## Troubleshooting
 
 ### "API keys not configured"
-- Make sure `.env` file exists and contains valid API keys
+- Make sure `backend/.env` file exists and contains valid API keys
 - Check that you're in the correct directory
 
-### "Module not found"
+### "No response from server"
+- Make sure the backend is running on port 8000
+- Check `NEXT_PUBLIC_API_URL` in frontend `.env.local`
+
+### "Module not found" (Backend)
 - Activate your virtual environment: `source venv/bin/activate`
 - Reinstall dependencies: `pip install -r requirements.txt`
 
-### Content not viral enough
-- Try a different topic or angle
-- Adjust `VIRALITY_THRESHOLD` in `.env` (though this may reduce quality)
-- The system learns what works through the feedback loop
+### "Module not found" (Frontend)
+- Delete `node_modules` and `package-lock.json`
+- Run `npm install` again
+
+### CORS errors
+- Make sure backend CORS is configured for your frontend URL
+- Check `backend/main.py` CORS settings
 
 ## Performance
 
@@ -175,21 +279,13 @@ Typical performance:
 - Review + iterations: 10-30 seconds
 - **Total**: 30-60 seconds average
 
-## Tech Stack
-
-- **LangGraph**: Multi-agent workflow orchestration
-- **Groq**: High-speed LLM inference (Llama models)
-- **Tavily**: AI-optimized search API
-- **Streamlit**: Modern web interface
-- **Python 3.8+**
-
 ## License
 
 This project is for educational and personal use.
 
 ## Credits
 
-Built with LangGraph, Groq API, and Tavily API.
+Built with LangGraph, Groq API, Tavily API, Next.js, and FastAPI.
 
 ---
 

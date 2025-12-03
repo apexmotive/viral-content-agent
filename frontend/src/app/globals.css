@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Claude-inspired warm neutral palette */
+  --background: 40 20% 97%;
+  /* #FAF8F6 - Warm paper-like background */
+  --foreground: 20 10% 15%;
+  /* #292524 - Soft black */
+
+  --card: 0 0% 100%;
+  --card-foreground: 20 10% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 10% 15%;
+
+  --primary: 24 10% 30%;
+  /* Warm dark grey/brown */
+  --primary-foreground: 40 20% 97%;
+
+  --secondary: 40 10% 92%;
+  /* Darker beige for inputs/secondary */
+  --secondary-foreground: 20 10% 15%;
+
+  --muted: 40 10% 92%;
+  --muted-foreground: 20 5% 45%;
+
+  --accent: 24 20% 90%;
+  /* Warm accent */
+  --accent-foreground: 20 10% 15%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 20 5% 85%;
+  --input: 20 5% 85%;
+  --ring: 24 10% 30%;
+
+  --radius: 0.75rem;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+@layer utilities {
+  .font-serif {
+    font-family: 'Merriweather', 'Georgia', serif;
+  }
+
+  .font-sans {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+}

@@ -29,16 +29,21 @@ The system ensures that no content is finalized until it passes a strict "Virali
         *   **Readability:** Uses short sentences, white space, and punchy copy.
         *   **Formatting:** Optimizes for the specific platform (e.g., threads for Twitter, longer form for LinkedIn).
 
-### ⚖️ Chief Editor (The Critic)
-*   **Role:** The Virality Gatekeeper.
+### ⚖️ Chief Editor (The Active Editor)
+*   **Role:** The Virality Gatekeeper & Final Polisher.
 *   **Tooling:** Powered by Groq API.
 *   **Function:**
     *   Reviews the Ghostwriter's draft.
     *   Scores the post on a "Virality Scale" (0-100) based on specific criteria:
-        *   **Hook Strength:** Is it click-baity enough without being misleading?
-        *   **Emoji Usage:** Is it tasteful or cringey?
-        *   **Structure:** Are paragraphs too long? Is the rhythm right?
-    *   **Feedback Loop:** If the score is below a threshold (e.g., 85/100), it rejects the draft and provides specific, actionable feedback (e.g., "The hook is weak, try using a statistic," "Too many emojis in paragraph 2").
+        *   **Hook Strength:** Is it compelling enough to stop the scroll?
+        *   **Emoji Usage:** Is it tasteful or excessive?
+        *   **Structure:** Are lines short and punchy? Is the rhythm right?
+        *   **Platform Optimization:** Does it fit the platform's best practices?
+    *   **Active Editor Pattern:** 
+        *   If score < threshold: Provides specific, actionable feedback and sends back to Ghostwriter
+        *   If score ≥ threshold: Applies final polish directly instead of just approving
+    *   **Transparency:** All scores and feedback are tracked for each draft iteration
+
 
 ## 4. Technical Stack
 *   **Orchestration:** LangGraph (Python)
@@ -47,13 +52,18 @@ The system ensures that no content is finalized until it passes a strict "Virali
 *   **Interface:** Streamlit
 
 ## 5. User Workflow
-1.  **Input:** User provides a topic (e.g., "Accounting Software") and a target platform (Twitter or LinkedIn).
+1.  **Input:** User provides a topic and selects platform (Twitter or LinkedIn). Can customize settings (model, iterations, threshold) in sidebar.
 2.  **Research:** Trend Scout finds 3-5 unique angles/news items.
-3.  **Drafting:** Ghostwriter selects the best angle and writes a draft.
+3.  **Drafting:** Ghostwriter creates content using the best angles with poetic, short-line structure.
 4.  **Review:** Chief Editor scores the draft.
-    *   *Pass:* Content is output to the user.
-    *   *Fail:* Feedback is sent back to Ghostwriter for iteration.
-5.  **Output:** User receives a ready-to-post thread or article.
+    *   **Score < Threshold:** Specific feedback sent back to Ghostwriter for revision (tracked in history).
+    *   **Score ≥ Threshold:** Chief Editor applies final polish and approves.
+5.  **Output:** User receives:
+    *   Final polished content ready to post
+    *   Complete draft history with scores
+    *   All feedback and reviews from Chief Editor
+    *   Research angles and sources from Trend Scout
+
 
 ## 6. Success Criteria
 *   **Virality Score:** Consistently producing content that scores >80/100 by the Chief Editor.
