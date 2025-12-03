@@ -176,6 +176,8 @@ Deploy both frontend and backend to Vercel in one place:
 
 **See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed instructions.**
 
+**📚 For deploying FastAPI + Next.js monorepos to Vercel, see [deploy-fastapi-vercel.md](./deploy-fastapi-vercel.md) - a comprehensive guide with solutions to common issues.**
+
 ### Option 2: Vercel (Frontend) + Railway/Render (Backend)
 
 If you prefer separate deployments:

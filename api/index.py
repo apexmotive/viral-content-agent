@@ -22,11 +22,20 @@ try:
     from mangum import Mangum
     
     # Create ASGI handler for Vercel
-    handler = Mangum(app, lifespan="off")
+    mangum_handler = Mangum(app, lifespan="off")
 finally:
     os.chdir(original_cwd)
 
 # Export handler for Vercel (required)
-# Vercel will call this function for each request
-# The handler variable is what Vercel will use
+# Vercel Python functions need a handler function that takes (event, context)
+def handler(event, context):
+    """Vercel serverless function handler."""
+    try:
+        return mangum_handler(event, context)
+    except Exception as e:
+        # Log error for debugging
+        print(f"Error in handler: {str(e)}", flush=True)
+        import traceback
+        traceback.print_exc()
+        raise
 
