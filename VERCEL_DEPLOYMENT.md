@@ -49,7 +49,7 @@ viral-content-agent/
    - **Framework Preset**: Next.js (should auto-detect)
    - **Build Command**: `cd frontend && npm run build` (already in vercel.json)
    - **Output Directory**: `frontend/.next` (already in vercel.json)
-   - **Install Command**: `cd frontend && npm install && pip install -r requirements.txt`
+   - **Install Command**: `cd frontend && npm install && cd .. && pip install -r requirements.txt`
 5. Configure environment variables (see Step 3)
 6. Click **"Deploy"**
 
@@ -152,7 +152,7 @@ If you see this error during deployment:
    - **Framework Preset**: `Next.js`
    - **Build Command**: `cd frontend && npm run build`
    - **Output Directory**: `frontend/.next`
-   - **Install Command**: `cd frontend && npm install && pip install -r requirements.txt`
+   - **Install Command**: `cd frontend && npm install && cd .. && pip install -r requirements.txt`
 5. Save and redeploy
 
 **Note**: A root `package.json` has been added to help Vercel detect Next.js. This file delegates to the frontend package.json for actual dependencies.
