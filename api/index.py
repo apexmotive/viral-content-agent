@@ -28,7 +28,5 @@ finally:
 
 # Export handler for Vercel (required)
 # Vercel will call this function for each request
-def handler_wrapper(event, context):
-    """Vercel serverless function handler."""
-    return handler(event, context)
+# The handler variable is what Vercel will use
 

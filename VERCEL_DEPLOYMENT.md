@@ -139,7 +139,7 @@ Response → User
 
 - Ensure `backend/requirements.txt` includes all dependencies
 - Check that `requirements.txt` at root references backend requirements correctly
-- Verify Python runtime version in `vercel.json` (python3.9)
+- Vercel auto-detects Python runtime (no need to specify in vercel.json)
 
 ### API routes not working
 

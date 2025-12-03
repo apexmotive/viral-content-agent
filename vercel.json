@@ -4,11 +4,6 @@
     "installCommand": "cd frontend && npm install",
     "framework": "nextjs",
     "outputDirectory": "frontend/.next",
-    "functions": {
-        "api/index.py": {
-            "runtime": "python3.9"
-        }
-    },
     "rewrites": [
         {
             "source": "/api/:path*",
