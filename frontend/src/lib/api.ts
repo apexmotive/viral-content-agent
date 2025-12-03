@@ -4,9 +4,14 @@ import axios, { AxiosError } from 'axios';
 
 // Get API URL - use relative path in production, localhost in development
 const getApiUrl = (): string => {
-  // If NEXT_PUBLIC_API_URL is explicitly set, use it
+  // If NEXT_PUBLIC_API_URL is explicitly set, use it (should be base URL without /api)
   if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+    // Remove trailing /api if present to avoid double /api/api/
+    let url = process.env.NEXT_PUBLIC_API_URL;
+    if (url.endsWith('/api')) {
+      url = url.slice(0, -4);
+    }
+    return url;
   }
   
   // In browser (client-side)

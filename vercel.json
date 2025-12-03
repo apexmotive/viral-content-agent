@@ -6,7 +6,7 @@
     "outputDirectory": "frontend/.next",
     "rewrites": [
         {
-            "source": "/api/:path*",
+            "source": "/api/(.*)",
             "destination": "/api/index"
         }
     ]
