@@ -230,6 +230,7 @@ viral-content-agent/
 │
 ├── api/                       # Vercel serverless functions
 │   └── index.py              # FastAPI wrapper for Vercel
+├── package.json               # Root package.json (for Vercel detection)
 ├── vercel.json                # Vercel deployment config
 ├── requirements.txt           # Root Python deps (for Vercel)
 ├── VERCEL_DEPLOYMENT.md       # Vercel-only deployment guide

@@ -32,6 +32,7 @@ viral-content-agent/
 ├── frontend/             # Next.js frontend
 │   ├── package.json
 │   └── ...
+├── package.json         # Root package.json (helps Vercel detect Next.js)
 ├── requirements.txt      # Root requirements (references backend/requirements.txt)
 └── vercel.json          # Vercel configuration
 ```
@@ -43,7 +44,12 @@ viral-content-agent/
 1. Go to [vercel.com](https://vercel.com) and sign in
 2. Click **"Add New Project"**
 3. Import your GitHub repository
-4. Vercel will auto-detect the configuration from `vercel.json`
+4. **Important Configuration:**
+   - **Root Directory**: Leave as `.` (root) - don't change to `frontend`
+   - **Framework Preset**: Next.js (should auto-detect)
+   - **Build Command**: `cd frontend && npm run build` (already in vercel.json)
+   - **Output Directory**: `frontend/.next` (already in vercel.json)
+   - **Install Command**: `cd frontend && npm install && pip install -r requirements.txt`
 5. Configure environment variables (see Step 3)
 6. Click **"Deploy"**
 
@@ -134,6 +140,22 @@ Response → User
   - Includes Mangum for serverless adapter
 
 ## Troubleshooting
+
+### "No Next.js version detected" error
+
+If you see this error during deployment:
+
+1. **In Vercel Dashboard**, go to your project **Settings → General**
+2. Make sure **Root Directory** is set to `.` (root, not `frontend`)
+3. Go to **Settings → Build & Development Settings**
+4. Manually set:
+   - **Framework Preset**: `Next.js`
+   - **Build Command**: `cd frontend && npm run build`
+   - **Output Directory**: `frontend/.next`
+   - **Install Command**: `cd frontend && npm install && pip install -r requirements.txt`
+5. Save and redeploy
+
+**Note**: A root `package.json` has been added to help Vercel detect Next.js. This file delegates to the frontend package.json for actual dependencies.
 
 ### "Module not found" errors
 
