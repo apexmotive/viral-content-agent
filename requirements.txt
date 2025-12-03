@@ -1,8 +1,3 @@
-langgraph==0.2.45
-langchain-groq==0.2.1
-langchain-core==0.3.21
-tavily-python==0.5.0
-python-dotenv==1.0.0
-pydantic==2.10.3
-colorama==0.4.6
-streamlit==1.39.0
+# Root requirements.txt for Vercel deployment
+# This file is used by Vercel to install Python dependencies
+-r backend/requirements.txt

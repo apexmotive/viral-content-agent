@@ -47,7 +47,8 @@ async def startup_event():
         print("✅ Configuration validated successfully")
     except Exception as e:
         print(f"❌ Configuration error: {e}")
-        raise
+        # Don't raise in serverless - log instead
+        # raise
 
 
 if __name__ == "__main__":

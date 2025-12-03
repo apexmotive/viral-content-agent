@@ -2,7 +2,23 @@
 
 import axios, { AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Use relative path in production (same domain), localhost in development
+// In production on Vercel, API routes are on the same domain
+// In development, use localhost backend
+const getApiUrl = () => {
+  // If NEXT_PUBLIC_API_URL is explicitly set, use it
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  // In browser (production), use relative path
+  if (typeof window !== 'undefined') {
+    return '';
+  }
+  // In server-side (development), use localhost
+  return 'http://localhost:8000';
+};
+
+const API_URL = getApiUrl();
 
 export interface GenerationSettings {
     model: string;

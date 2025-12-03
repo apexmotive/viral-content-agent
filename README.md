@@ -152,9 +152,33 @@ The app will open at `http://localhost:3000`
 
 ## Deployment to Vercel
 
-### Option 1: Vercel (Frontend Only)
+### Option 1: Vercel Only (Recommended) 🚀
 
-If you want to deploy the frontend to Vercel and run the backend separately:
+Deploy both frontend and backend to Vercel in one place:
+
+1. **Deploy to Vercel:**
+   ```bash
+   # Install Vercel CLI (if not already installed)
+   npm i -g vercel
+   
+   # Deploy
+   vercel
+   ```
+
+2. **Configure Environment Variables** in Vercel dashboard:
+   - `GROQ_API_KEY` - Your Groq API key
+   - `TAVILY_API_KEY` - Your Tavily API key
+   - `GROQ_MODEL` (optional) - Default: `llama-3.3-70b-versatile`
+   - `MAX_ITERATIONS` (optional) - Default: `3`
+   - `VIRALITY_THRESHOLD` (optional) - Default: `85`
+
+3. **That's it!** Your app is live on Vercel.
+
+**See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed instructions.**
+
+### Option 2: Vercel (Frontend) + Railway/Render (Backend)
+
+If you prefer separate deployments:
 
 1. **Deploy Frontend to Vercel:**
    ```bash
@@ -171,21 +195,7 @@ If you want to deploy the frontend to Vercel and run the backend separately:
    - In Vercel dashboard, add environment variable:
    - `NEXT_PUBLIC_API_URL` = your backend URL
 
-### Option 2: Separate Deployment
-
-**Backend (Railway/Render):**
-```bash
-# Push backend directory to GitHub
-# Connect to Railway/Render
-# Add environment variables in dashboard
-```
-
-**Frontend (Vercel):**
-```bash
-# Push frontend directory to GitHub
-# Connect to Vercel
-# Add NEXT_PUBLIC_API_URL environment variable
-```
+**See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.**
 
 ## Project Structure
 
@@ -218,7 +228,11 @@ viral-content-agent/
 │   ├── next.config.ts
 │   └── .env.local             # Frontend env vars
 │
+├── api/                       # Vercel serverless functions
+│   └── index.py              # FastAPI wrapper for Vercel
 ├── vercel.json                # Vercel deployment config
+├── requirements.txt           # Root Python deps (for Vercel)
+├── VERCEL_DEPLOYMENT.md       # Vercel-only deployment guide
 └── README.md                  # This file
 ```
 
