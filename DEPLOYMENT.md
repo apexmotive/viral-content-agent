@@ -221,3 +221,7 @@ As your usage grows:
 ---
 
 **Your app is now live! 🚀**
+
+
+
+Environment Variable "NEXT_PUBLIC_API_URL" references Secret "next_public_api_url", which does not exist.
